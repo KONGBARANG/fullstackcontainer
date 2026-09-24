@@ -1,0 +1,344 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Fullstack Book Management System</title>
+    <!-- Google Font & FontAwesome Icons -->
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    
+    <style>
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+            font-family: 'Poppins', sans-serif;
+        }
+
+        body {
+            background: #f0f2f5;
+            color: #333;
+            min-height: 100vh;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            padding: 20px;
+        }
+
+        .container {
+            width: 100%;
+            max-width: 900px;
+        }
+
+        .card {
+            background: #ffffff;
+            padding: 35px;
+            border-radius: 16px;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.08);
+            margin: 0 auto;
+        }
+
+        /* Login Screen Specifics */
+        .login-card {
+            max-width: 400px;
+            text-align: center;
+        }
+
+        h2 {
+            color: #1a202c;
+            font-weight: 600;
+            margin-bottom: 8px;
+        }
+
+        p.subtitle {
+            color: #718096;
+            font-size: 14px;
+            margin-bottom: 24px;
+        }
+
+        .input-group {
+            margin-bottom: 18px;
+            position: relative;
+        }
+
+        .input-group i {
+            position: absolute;
+            left: 14px;
+            top: 50%;
+            transform: translateY(-50%);
+            color: #a0aec0;
+        }
+
+        input {
+            width: 100%;
+            padding: 12px 16px 12px 42px;
+            border: 1.5px solid #e2e8f0;
+            border-radius: 8px;
+            font-size: 14px;
+            outline: none;
+            transition: all 0.2s;
+        }
+
+        input:focus {
+            border-color: #3182ce;
+            box-shadow: 0 0 0 3px rgba(49, 130, 206, 0.15);
+        }
+
+        .btn {
+            width: 100%;
+            padding: 12px;
+            background: #3182ce;
+            color: white;
+            border: none;
+            border-radius: 8px;
+            font-size: 15px;
+            font-weight: 500;
+            cursor: pointer;
+            transition: all 0.2s;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .btn:hover {
+            background: #2b6cb0;
+        }
+
+        /* Dashboard Layout */
+        .dashboard-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding-bottom: 20px;
+            border-bottom: 1px solid #edf2f7;
+            margin-bottom: 25px;
+        }
+
+        .status-badge {
+            background: #c6f6d5;
+            color: #22543d;
+            padding: 6px 12px;
+            border-radius: 20px;
+            font-size: 12px;
+            font-weight: 600;
+            display: flex;
+            align-items: center;
+            gap: 6px;
+        }
+
+        .grid-layout {
+            display: grid;
+            grid-template-columns: 1fr 1.5fr;
+            gap: 30px;
+        }
+
+        @media (max-width: 768px) {
+            .grid-layout { grid-template-columns: 1fr; }
+        }
+
+        /* Table Styling */
+        .table-container {
+            overflow-x: auto;
+        }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            text-align: left;
+        }
+
+        th {
+            background: #f7fafc;
+            color: #4a5568;
+            font-weight: 600;
+            font-size: 13px;
+            padding: 12px;
+            border-bottom: 2px solid #edf2f7;
+        }
+
+        td {
+            padding: 12px;
+            border-bottom: 1px solid #edf2f7;
+            font-size: 14px;
+            color: #2d3748;
+        }
+
+        .alert-box {
+            padding: 10px;
+            border-radius: 8px;
+            font-size: 13px;
+            margin-bottom: 15px;
+            display: none;
+        }
+        .alert-error { background: #fed7d7; color: #9b2c2c; }
+        .alert-success { background: #c6f6d5; color: #22543d; }
+
+        .hidden { display: none !important; }
+    </style>
+</head>
+<body>
+
+    <div class="container">
+        
+        <!-- SECTION 1: LOGIN CARD -->
+        <div id="loginSection" class="card login-card">
+            <h2><i class="fa-solid fa-server" style="color: #3182ce;"></i> System Login</h2>
+            <p class="subtitle">Enter credentials to connect to MySQL Database</p>
+            
+            <div id="loginAlert" class="alert-box alert-error"></div>
+            
+            <div class="input-group">
+                <i class="fa-solid fa-user"></i>
+                <input type="text" id="username" placeholder="Username (admin)">
+            </div>
+            <div class="input-group">
+                <i class="fa-solid fa-lock"></i>
+                <input type="password" id="password" placeholder="Password (123456)">
+            </div>
+            <button class="btn" onclick="login()"><i class="fa-solid fa-right-to-bracket"></i> Connect & Login</button>
+        </div>
+
+        <!-- SECTION 2: FULLSTACK DASHBOARD -->
+        <div id="dashboardSection" class="card hidden">
+            <div class="dashboard-header">
+                <div>
+                    <h2><i class="fa-solid fa-book-open" style="color: #3182ce;"></i> Book Management</h2>
+                    <p class="subtitle" style="margin-bottom: 0;">Live Node.js API & MySQL Integration</p>
+                </div>
+                <div class="status-badge">
+                    <i class="fa-solid fa-circle" style="font-size: 8px; color: #38a169;"></i> DB Connected
+                </div>
+            </div>
+
+            <div class="grid-layout">
+                <!-- FORM: Add Book -->
+                <div>
+                    <h3 style="font-size: 16px; margin-bottom: 15px;"><i class="fa-solid fa-plus-circle"></i> Add New Record</h3>
+                    <div id="bookAlert" class="alert-box alert-success"></div>
+                    
+                    <div class="input-group">
+                        <i class="fa-solid fa-book"></i>
+                        <input type="text" id="bookTitle" placeholder="Book Title">
+                    </div>
+                    <div class="input-group">
+                        <i class="fa-solid fa-pen-nib"></i>
+                        <input type="text" id="authorName" placeholder="Author Name">
+                    </div>
+                    <button class="btn" onclick="addBook()"><i class="fa-solid fa-cloud-arrow-up"></i> Save to Database</button>
+                </div>
+
+                <!-- TABLE: Display Live Records -->
+                <div>
+                    <h3 style="font-size: 16px; margin-bottom: 15px;"><i class="fa-solid fa-database"></i> Live Database Records</h3>
+                    <div class="table-container">
+                        <table>
+                            <thead>
+                                <tr>
+                                    <th>ID</th>
+                                    <th>Title</th>
+                                    <th>Author</th>
+                                </tr>
+                            </thead>
+                            <tbody id="bookTableBody">
+                                <tr>
+                                    <td colspan="3" style="text-align: center; color: #a0aec0;">Loading data...</td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+    </div>
+
+    <script>
+        function showAlert(elementId, message, isSuccess = false) {
+            const alertBox = document.getElementById(elementId);
+            alertBox.innerText = message;
+            alertBox.style.display = 'block';
+            alertBox.className = isSuccess ? 'alert-box alert-success' : 'alert-box alert-error';
+        }
+
+        async function login() {
+            const username = document.getElementById('username').value;
+            const password = document.getElementById('password').value;
+
+            try {
+                const res = await fetch('/api/login', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ username, password })
+                });
+                const data = await res.json();
+
+                if (data.success) {
+                    document.getElementById('loginSection').classList.add('hidden');
+                    document.getElementById('dashboardSection').classList.remove('hidden');
+                    loadBooks(); // ទាញយកទិន្នន័យពី MySQL មកបង្ហាញភ្លាមៗ
+                } else {
+                    showAlert('loginAlert', data.message || 'Invalid credentials!');
+                }
+            } catch (err) {
+                showAlert('loginAlert', 'Cannot connect to Node.js Backend.');
+            }
+        }
+
+        async function loadBooks() {
+            try {
+                const res = await fetch('/api/books');
+                const books = await res.json();
+                
+                const tableBody = document.getElementById('bookTableBody');
+                tableBody.innerHTML = '';
+
+                if (books.length === 0) {
+                    tableBody.innerHTML = '<tr><td colspan="3" style="text-align:center; color:#a0aec0;">No records in MySQL DB</td></tr>';
+                    return;
+                }
+
+                books.forEach((book, index) => {
+                    tableBody.innerHTML += `
+                        <tr>
+                            <td>#${book.id || index + 1}</td>
+                            <td><strong>${book.title}</strong></td>
+                            <td>${book.author}</td>
+                        </tr>
+                    `;
+                });
+            } catch (err) {
+                console.error("Error loading books:", err);
+            }
+        }
+
+        async function addBook() {
+            const title = document.getElementById('bookTitle').value;
+            const author = document.getElementById('authorName').value;
+
+            if(!title || !author) {
+                showAlert('bookAlert', 'Please fill in both fields!', false);
+                return;
+            }
+
+            try {
+                const res = await fetch('/api/books', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ title, author })
+                });
+                const data = await res.json();
+                
+                showAlert('bookAlert', 'Data saved successfully to MySQL!', true);
+                document.getElementById('bookTitle').value = '';
+                document.getElementById('authorName').value = '';
+                
+                loadBooks(); // Update តុទិន្នន័យភ្លាមៗ
+            } catch (err) {
+                showAlert('bookAlert', 'Failed to send data to server.', false);
+            }
+        }
+    </script>
+</body>
+</html>
