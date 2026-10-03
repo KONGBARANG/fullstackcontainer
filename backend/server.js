@@ -9,9 +9,9 @@ app.use(cors());
 // ភ្ជាប់ទៅកាន់ MySQL Container
 const db = mysql.createPool({
     host: process.env.DB_HOST || 'db',
-    user: process.env.DB_USER || 'root',
+    user: process.env.DB_USER || 'admin',
     password: process.env.DB_PASSWORD || '123456',
-    database: process.env.DB_NAME || 'admin'
+    database: process.env.DB_NAME || 'appdb'
 });
 
 // 1. API សម្រាប់ Login
