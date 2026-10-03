@@ -10,8 +10,8 @@ app.use(cors());
 const db = mysql.createPool({
     host: process.env.DB_HOST || 'db',
     user: process.env.DB_USER || 'root',
-    password: process.env.DB_PASSWORD || 'rootpassword',
-    database: process.env.DB_NAME || 'appdb'
+    password: process.env.DB_PASSWORD || '123456',
+    database: process.env.DB_NAME || 'admin'
 });
 
 // 1. API សម្រាប់ Login
